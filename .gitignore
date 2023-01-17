@@ -102,3 +102,13 @@ dist
 
 # TernJS port file
 .tern-port
+
+.DS_Store
+
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+/types
+/index.cjs
+/index.js

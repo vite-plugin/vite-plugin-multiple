@@ -1,0 +1,41 @@
+{
+  "name": "vite-plugin-multiple",
+  "version": "0.1.0",
+  "description": "Allow multiple Vite to run simultaneously",
+  "type": "module",
+  "main": "index.js",
+  "types": "src",
+  "exports": {
+    ".": {
+      "import": "./index.js",
+      "require": "./index.cjs"
+    }
+  },
+  "repository": "https://github.com/vite-plugin/vite-plugin-multiple.git",
+  "author": "草鞋没号 <308487730@qq.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build",
+    "types": "tsc",
+    "test": "vitest run",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "node-fetch": "^3.3.0",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.4",
+    "vitest": "^0.27.1"
+  },
+  "files": [
+    "types",
+    "index.cjs",
+    "index.js"
+  ],
+  "keywords": [
+    "vite",
+    "config",
+    "multiple"
+  ]
+}
