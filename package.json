@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-multiple",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Allow multiple Vite to run simultaneously",
   "type": "module",
   "main": "index.js",
