@@ -6,9 +6,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   build: {
+    emptyOutDir: false,
     minify: false,
     outDir: '',
-    emptyOutDir: false,
     target: 'node14',
     lib: {
       entry: path.join(__dirname, 'src/index.ts'),
@@ -28,13 +28,6 @@ export default defineConfig({
       },
     },
   },
-  plugins: [{
-    name: 'plugin-generate-types',
-    config() {
-      fs.rmSync('types', { recursive: true, force: true })
-      generateTypes()
-    },
-  }],
 })
 
 function generateTypes() {
@@ -50,4 +43,9 @@ function generateTypes() {
     })
     cp.on('error', process.exit)
   })
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  fs.rmSync('types', { recursive: true, force: true })
+  generateTypes()
 }
