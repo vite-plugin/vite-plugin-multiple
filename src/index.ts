@@ -9,20 +9,20 @@ import {
   mergeConfig,
 } from 'vite'
 
-export interface OptionItem {
-  /**
-   * Human friendly name of your entry point.
-   */
-  name: string
-  /**
-   * Vite config file path.
-   */
-  config: string
-}
+export type AppConfig = Parameters<typeof multiple>[0][number]
 
 export default function multiple(
-  options: OptionItem[],
-  args: {
+  apps: {
+    /**
+     * Human friendly name of your entry point.
+     */
+    name: string
+    /**
+     * Vite config file path.
+     */
+    config: string
+  }[],
+  options: {
     /**
      * Called when all builds are complete.
      */
@@ -41,32 +41,32 @@ export default function multiple(
     },
     configureServer(server) {
       if (server.httpServer) {
-        server.httpServer.once('listening', () => serve(config, options).then(() => args.callback?.('serve')))
+        server.httpServer.once('listening', () => serve(config, apps).then(() => options.callback?.('serve')))
       } else {
-        serve(config, options).then(() => args.callback?.('serve'))
+        serve(config, apps).then(() => options.callback?.('serve'))
       }
     },
     async closeBundle() {
       if (config.command === 'build') {
-        await build(config, options)
-        args.callback?.(config.command)
+        await build(config, apps)
+        options.callback?.(config.command)
       }
     },
   }
 }
 
-export async function resolveConfig(config: ResolvedConfig, option: OptionItem): Promise<UserConfig> {
+export async function resolveConfig(config: ResolvedConfig, app: AppConfig): Promise<UserConfig> {
   const { config: userConfig } = (await loadConfigFromFile({
     command: config.command,
     mode: config.mode,
     ssrBuild: !!config.build?.ssr,
-  }, option.config)) ?? { path: '', config: {}, dependencies: [] };
+  }, app.config)) ?? { path: '', config: {}, dependencies: [] };
   const defaultConfig: UserConfig = {
     root: config.root,
     mode: config.mode,
     build: {
-      outDir: !userConfig.root || config.root === userConfig.root
-        ? path.posix.join(config.build.outDir, option.name)
+      outDir: !userConfig.root || userConfig.root === /* conflict */config.root
+        ? path.posix.join(config.build.outDir, app.name)
         : undefined,
     },
     clearScreen: false,
@@ -74,9 +74,9 @@ export async function resolveConfig(config: ResolvedConfig, option: OptionItem):
   return mergeConfig(defaultConfig, userConfig);
 }
 
-export async function build(config: ResolvedConfig, options: OptionItem[]) {
-  for (const option of options) {
-    const userConfig = await resolveConfig(config, option)
+export async function build(config: ResolvedConfig, apps: AppConfig[]) {
+  for (const app of apps) {
+    const userConfig = await resolveConfig(config, app)
     await viteBuild({
       // 🚧 Avoid recursive build caused by load default config file.
       configFile: false,
@@ -85,10 +85,10 @@ export async function build(config: ResolvedConfig, options: OptionItem[]) {
   }
 }
 
-export async function serve(config: ResolvedConfig, options: OptionItem[]) {
+export async function serve(config: ResolvedConfig, apps: AppConfig[]) {
   let port = 5174 // The port of main App is 5173
-  for (const option of options) {
-    const userConfig = await resolveConfig(config, option)
+  for (const app of apps) {
+    const userConfig = await resolveConfig(config, app)
 
     userConfig.server ??= {}
     userConfig.server.port ??= port++

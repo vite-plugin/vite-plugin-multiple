@@ -48,7 +48,7 @@ export default {
 
 ```ts
 multiple(
-  options: {
+  apps: {
     /**
      * Human friendly name of your entry point.
      */
@@ -58,11 +58,11 @@ multiple(
      */
     config: string
   }[],
-  args?: {
+  options: {
     /**
      * Called when all builds are complete.
      */
-    callback?: (command: 'build' | 'serve') => void
-  },
+    callback?: (command: ResolvedConfig['command']) => void,
+  } = {},
 )
 ```
