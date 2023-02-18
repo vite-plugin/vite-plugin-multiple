@@ -28,7 +28,7 @@ beforeAll(async () => new Promise(async resolve => {
         config: path.join(root, 'bar/vite.config.mjs'),
       },
     ], {
-      callback(command) {
+      callback() {
         resolve()
       },
     })],
