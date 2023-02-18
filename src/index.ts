@@ -1,6 +1,5 @@
 import path from 'node:path'
 import {
-  type ConfigEnv,
   type Plugin,
   type ResolvedConfig,
   type UserConfig,
@@ -25,7 +24,7 @@ export default function multiple(
     /**
      * Explicitly specify the run command.
      */
-    command?: ConfigEnv['command']
+    command?: 'build' | 'serve'
   }[],
   options: {
     /**
@@ -82,7 +81,7 @@ export async function resolveConfig(config: ResolvedConfig, app: AppConfig): Pro
 export async function run(
   config: ResolvedConfig,
   apps: AppConfig[],
-  mainAppCommand: ConfigEnv['command'],
+  mainAppCommand: ResolvedConfig['command'],
 ): Promise<void> {
   let port = 5174 // The port of main App is 5173
 
