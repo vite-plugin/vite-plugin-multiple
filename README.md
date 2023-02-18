@@ -57,12 +57,16 @@ multiple(
      * Vite config file path.
      */
     config: string
+    /**
+     * Explicitly specify the run command.
+     */
+    command?: 'build' | 'serve'
   }[],
   options: {
     /**
      * Called when all builds are complete.
      */
-    callback?: (command: ResolvedConfig['command']) => void,
+    callback?: () => void,
   } = {},
 )
 ```
